@@ -19,58 +19,47 @@ if (testimonialEl.length > 0) {
 }
 
 function submitForm() {
-  const orderBtn = document.getElementById("order-submit-btn");
-  orderBtn.disabled = true;
-  orderBtn.innerText = "Loading...";
+  // Obtén los valores de los campos del formulario
+  const gender = document.getElementById("gender").value;
+  const weight = document.getElementById("weight").value;
+  const height = document.getElementById("height").value;
+  const age = document.getElementById("age").value;
+  const intensity = document.getElementById("intensity").value;
+  const goal = document.getElementById("goal").value;
+  const condition = document.getElementById("condition").value;
+  const equip = document.getElementById("equip").value;
+  const email = document.getElementById("email").value;
 
-  const form = document.getElementById("order-form");
-  const formData = new FormData(form);
+  // Crea un objeto con los datos del formulario
+  const formData = {
+      gender: gender,
+      weight: weight,
+      height: height,
+      age: age,
+      intensity: intensity,
+      goal: goal,
+      condition: condition,
+      equip: equip,
+      email: email
+  };
 
-  if (!formData.has("vegan")){
-    formData.append("vegan", "false");
-  }
-  if (!formData.has("vegetarian")){
-    formData.append("vegetarian", "false");
-  }
-  if (!formData.has("sugarFree")){
-    formData.append("sugarFree", "false");
-  }
-  if (!formData.has("oilFree")){
-    formData.append("oilFree", "false");
-  }
-
-  // const output = document.getElementById("output");
-  //
-  // for (const [key, value] of formData) {
-  //   output.textContent += `${key}: ${value}\n`;
-  // }
-
-		let payload = {
-        gender: formData.get('gender'),
-        age: formData.get('age'),
-        weight: formData.get('weight'),
-        goal: formData.get('goal'),
-        equip: formData.get('equip'),
-        intensity: formData.get('intensity'),
-        vegetarian: formData.get('vegetarian'),
-        vegan: formData.get('vegan'),
-        sugarFree: formData.get('sugarFree'),
-        oilFree: formData.get('oilFree'),
-        email: formData.get('email')
+  // Realiza una solicitud POST al webhook de Zapier
+  fetch('https://hook.us1.make.com/thvhwjhkapd9exkswfopz0pnpyu4swx3', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+  })
+  .then(response => {
+      if (response.ok) {
+          // Aquí puedes realizar acciones adicionales después de enviar el formulario, como redirigir al usuario o mostrar un mensaje de éxito.
+          console.log('Formulario enviado con éxito. Revisa tu correo.');
+      } else {
+          console.error('Error al enviar el formulario');
       }
-										
-  let url = 'https://app.mikeai.co/api/checkout-session';
-
-  fetch(url, {
-    method:'POST',
-    body: JSON.stringify(payload) 
   })
-    .then(res => res.json())
-    .then(json => {
-      console.log(json)
-      window.location.replace(json.url)
-    }).catch(err => {
-    alert('There has been an error, please contact us at nkrvivek@gmail.com');
-    console.log(err);
-  })
+  .catch(error => {
+      console.error('Error al enviar el formulario', error);
+  });
 }
