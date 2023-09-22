@@ -144,11 +144,11 @@
                                         <form id="order-form" method="post" onsubmit="event.preventDefault(); submitForm()">
                                             <div class="space-y-4">
                                                 <div class="sm:flex items-start justify-between sm:space-x-4">
-                                                    <label class="block text-sm leading-5 mt-2.5 text-slate-800 font-[550] text-left mb-1.5 sm:mb-0" for="gender">Genero</label>
+                                                    <label class="block text-sm leading-5 mt-2.5 text-slate-800 font-[550] text-left mb-1.5 sm:mb-0" for="gender">Género</label>
                                                     <div class="sm:w-72 xl:w-80 shrink-0">
                                                         <select id="gender" name="gender" class="form-select text-sm py-2 w-full" required>
-                                                            <option selected="" value="male">Masculino</option>
-                                                            <option value="female">Femenino</option>
+                                                            <option selected="" value="masculino">Masculino</option>
+                                                            <option value="femenino">Femenino</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -174,11 +174,11 @@
                                                     <label class="block text-sm leading-5 mt-2.5 text-slate-800 font-[550] text-left mb-1.5 sm:mb-0" for="intensity">¿Con qué frecuencia haces ejercicio?</label>
                                                     <div class="sm:w-72 xl:w-80 shrink-0">
                                                         <select id="intensity" name="intensity" class="form-select text-sm py-2 w-full" required>
-                                                            <option selected="" value="every_day">Diario</option>
-                                                            <option value="most_days">4-5 Dias por semana</option>
-                                                            <option value="two_three_days">2-3 Dias por semana</option>
-                                                            <option value="less_than_one_day">Less than 1 day a week</option>
-                                                            <option value="no_exercise">No hago ejercicio</option>
+                                                            <option selected="" value="diario">Diario</option>
+                                                            <option value="4-5_dias_semana">4-5 Días por semana</option>
+                                                            <option value="2-3_dias_semana">2-3 Días por semana</option>
+                                                            <option value="menos_de_un_dia_semana">Menos de 1 día por semana</option>
+                                                            <option value="no_hago_ejercicio">No hago ejercicio</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -186,19 +186,19 @@
                                                     <label class="block text-sm leading-5 mt-2.5 text-slate-800 font-[550] text-left mb-1.5 sm:mb-0" for="goal">¿Cuál es tu objetivo?</label>
                                                     <div class="sm:w-72 xl:w-80 shrink-0">
                                                         <select id="goal" name="goal" class="form-select text-sm py-2 w-full" required>
-                                                            <option selected="" value="gain_muscle">Ganar musculo</option>
-                                                            <option value="lose_weight">Perder peso</option>
-                                                            <option value="lose_weight">Tonificar y definir</option>
-                                                            <option value="lose_weight">Mejorar resistencia cardiovascular</option>
-                                                            <option value="lose_weight">Aumentar fuerza y potencia</option>
-                                                            <option value="lose_weight">Mejorar Flexibilidad</option>
-                                                            <option value="lose_weight">Mejorar Postura</option>
-                                                            <option value="get_fit">Mejorar salud en general</option>
+                                                            <option selected="" value="ganar_musculo">Ganar músculo</option>
+                                                            <option value="perder_peso">Perder peso</option>
+                                                            <option value="tonificar_y_definir">Tonificar y definir</option>
+                                                            <option value="mejorar_resistencia_cardiovascular">Mejorar resistencia cardiovascular</option>
+                                                            <option value="aumentar_fuerza_y_potencia">Aumentar fuerza y potencia</option>
+                                                            <option value="mejorar_flexibilidad">Mejorar flexibilidad</option>
+                                                            <option value="mejorar_postura">Mejorar postura</option>
+                                                            <option value="mejorar_salud_en_general">Mejorar salud en general</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="sm:flex items-start justify-between sm:space-x-4">
-                                                    <label class="block text-sm leading-5 mt-2.5 text-slate-800 font-[550] text-left mb-1.5 sm:mb-0" for="condition">Tienes alguna condición médica preexistente</label>
+                                                    <label class="block text-sm leading-5 mt-2.5 text-slate-800 font-[550] text-left mb-1.5 sm:mb-0" for="condition">¿Tienes alguna condición médica preexistente?</label>
                                                     <div class="sm:w-72 xl:w-80 shrink-0">
                                                         <input id="condition" name="condition" type="text" class="form-input text-sm py-2 w-full" placeholder="Me lesioné hace 6 meses..." required>
                                                     </div>
@@ -207,8 +207,8 @@
                                                     <label class="block text-sm leading-5 mt-2.5 text-slate-800 font-[550] text-left mb-1.5 sm:mb-0" for="equip">Equipo Disponible</label>
                                                     <div class="sm:w-72 xl:w-80 shrink-0">
                                                         <select id="equip" name="equip" class="form-select text-sm py-2 w-full" required>
-                                                            <option selected="" value="gym">Voy a un gimnasio</option>
-                                                            <option value="home">Hago ejercicio en mi casa</option>
+                                                            <option selected="" value="gimnasio">Voy a un gimnasio</option>
+                                                            <option value="casa">Hago ejercicio en mi casa</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -223,7 +223,7 @@
                                                 <button class="btn-sm w-full inline-block items-center text-slate-100 bg-slate-800 hover:bg-slate-900 shadow-sm" id="order-submit-btn">Compra ($99.00)</button>
                                                 <span class="pt-3 text-gray-400 cursor-default">Pago único</span>
                                             </div>
-                                        </form>
+                                        </form>                                        
                                     </div>
 
                                 </div>
