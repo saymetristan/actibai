@@ -55,11 +55,15 @@ function submitForm() {
       if (response.ok) {
           // Aquí puedes realizar acciones adicionales después de enviar el formulario, como redirigir al usuario o mostrar un mensaje de éxito.
           console.log('Formulario enviado con éxito. Revisa tu correo.');
+          alert('Formulario enviado con éxito. Por favor, revisa tu correo para obtener tu plan');
       } else {
           console.error('Error al enviar el formulario');
+          alert('Error al enviar el formulario. Si el error continua escribeme a mi twitter @oyetris');
+
       }
   })
   .catch(error => {
       console.error('Error al enviar el formulario', error);
+      alert('Error al enviar el formulario, Vuelve a intentarlo, si el error continua escribeme a mi twitter @oyetris');
   });
 }
