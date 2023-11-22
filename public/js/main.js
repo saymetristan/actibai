@@ -18,52 +18,68 @@ if (testimonialEl.length > 0) {
   });
 }
 
-function submitForm() {
-  // Obtén los valores de los campos del formulario
-  const gender = document.getElementById("gender").value;
-  const weight = document.getElementById("weight").value;
-  const height = document.getElementById("height").value;
-  const age = document.getElementById("age").value;
-  const intensity = document.getElementById("intensity").value;
-  const goal = document.getElementById("goal").value;
-  const condition = document.getElementById("condition").value;
-  const equip = document.getElementById("equip").value;
-  const email = document.getElementById("email").value;
+let stripePublicKey;
 
-  // Crea un objeto con los datos del formulario
-  const formData = {
-      gender: gender,
-      weight: weight,
-      height: height,
-      age: age,
-      intensity: intensity,
-      goal: goal,
-      condition: condition,
-      equip: equip,
-      email: email
-  };
+fetch('/config-stripe').then((result) => {
+    return result.json();
+}).then((config) => {
+    stripePublicKey = config.publicKey;
+    stripe = Stripe(stripePublicKey);
+}).catch((error) => {
+    console.error('Error fetching Stripe config:', error);
+});
 
-  // Realiza una solicitud POST al webhook de Zapier
-  fetch('https://hook.us1.make.com/thvhwjhkapd9exkswfopz0pnpyu4swx3', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-  })
-  .then(response => {
-      if (response.ok) {
-          // Aquí puedes realizar acciones adicionales después de enviar el formulario, como redirigir al usuario o mostrar un mensaje de éxito.
-          console.log('Formulario enviado con éxito. Revisa tu correo.');
-          alert('Formulario enviado con éxito. Por favor, revisa tu correo para obtener tu plan');
-      } else {
-          console.error('Error al enviar el formulario');
-          alert('Error al enviar el formulario. Si el error continua escribeme a mi twitter @oyetris');
+// Asegúrate de reemplazar 'tu_stripe_public_key' con tu clave pública real de Stripe
+const stripe = Stripe('stripePublicKey');
+document.getElementById('order-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-      }
-  })
-  .catch(error => {
-      console.error('Error al enviar el formulario', error);
-      alert('Error al enviar el formulario, Vuelve a intentarlo, si el error continua escribeme a mi twitter @oyetris');
-  });
-}
+    // Desactivar el botón de envío para prevenir envíos múltiples
+    document.getElementById('order-submit-btn').disabled = true;
+
+    try {
+        const response = await fetch('/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+               gender: document.getElementById("gender").value,
+               weight: document.getElementById("weight").value,
+               height: document.getElementById("height").value,
+               age: document.getElementById("age").value,
+               intensity: document.getElementById("intensity").value,
+               goal: document.getElementById("goal").value,
+               condition: document.getElementById("condition").value,
+               equip: document.getElementById("equip").value,
+               email: document.getElementById("email").value,
+            })
+        });
+
+        if (response.ok) {
+            const session = await response.json();
+
+            // Redirige al usuario a Stripe Checkout
+            const result = await stripe.redirectToCheckout({
+                sessionId: session.id
+            });
+
+            if (result.error) {
+                // Informa al usuario si hay un error
+                alert(result.error.message);
+                console.error(result.error.message);
+            }
+        } else {
+            // Manejo de errores si la respuesta no es ok
+            throw new Error('Network response was not ok.');
+        }
+    } catch (error) {
+        // Manejo de errores en la solicitud fetch
+        alert('Could not initiate Stripe Checkout. Please try again.');
+        console.error('Error:', error);
+    } finally {
+        // Reactivar el botón de envío
+        document.getElementById('order-submit-btn').disabled = false;
+    }
+});
+
