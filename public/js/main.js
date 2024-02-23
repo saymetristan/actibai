@@ -5,81 +5,95 @@ AOS.init({
   easing: 'ease-out-cubic',
 });
 
-const testimonialEl = document.querySelectorAll('.testimonial-carousel');
-if (testimonialEl.length > 0) {
-  const testimonial = new Swiper('.testimonial-carousel', {
-    slidesPerView: 1,
-    watchSlidesProgress: true,
-    effect: 'fade',
-    pagination: {
-      el: '.testimonial-carousel-pagination',
-      clickable: true
-    },
-  });
-}
+const stripe = Stripe('pk_test_51OMgDnApwArWThSdWZlYPFINGQLiuVXNY1Qe5YMOvrz8xXCaq9GFCPRSwGTAOofF4b77zAQM5BoK1dI7N1qgZHXY00fUT9TSH4');
 
-let stripePublicKey;
-
-fetch('/config-stripe').then((result) => {
-    return result.json();
-}).then((config) => {
-    stripePublicKey = config.publicKey;
-    stripe = Stripe(stripePublicKey);
-}).catch((error) => {
-    console.error('Error fetching Stripe config:', error);
-});
-
-// Asegúrate de reemplazar 'tu_stripe_public_key' con tu clave pública real de Stripe
-const stripe = Stripe('stripePublicKey');
-document.getElementById('order-form').addEventListener('submit', async (event) => {
+function validateForm(event) {
     event.preventDefault();
+    // Obtén los valores del formulario
+    const form = document.getElementById('order-form');
+    const gender = form['gender'].value;
+    const weight = form['weight'].value;
+    const height = form['height'].value;
+    const age = form['age'].value;
+    const intensity = form['intensity'].value;
+    const goal = form['goal'].value;
+    const condition = form['condition'].value;
+    const equip = form['equip'].value;
+    const email = form['email'].value;
+  
+    // Validación simple de ejemplo (puedes expandirla según sea necesario)
+    if (!form.checkValidity()) {
+        // Si no es válido, mostrar los mensajes de error predeterminados
+        form.reportValidity();
+        return;
+      }
+  
+    // Si el formulario es válido, procesa el pago
+    createCheckoutSession(gender, weight, height, age, intensity, goal, condition, equip, email);
+  }
+  
+  function createCheckoutSession(gender, weight, height, age, intensity, goal, condition, equip, email) {
+    fetch('/api/stripe/create-checkout-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      // Incluye los datos del formulario en la solicitud
+      body: JSON.stringify({
+        gender,
+        weight,
+        height,
+        age,
+        intensity,
+        goal,
+        condition,
+        equip,
+        email
+      })
+    })
+    .then(response => response.json())
+    
+    .then(session => {
+      localStorage.setItem('stripeSessionId', session.id);
+      return stripe.redirectToCheckout({ sessionId: session.id });
+    })
 
-    // Desactivar el botón de envío para prevenir envíos múltiples
-    document.getElementById('order-submit-btn').disabled = true;
+    .then(result => {
+      if (result.error) {
+        alert(result.error.message);
+      }
+    })
+    
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', (event) => {
+    const retryButton = document.getElementById('retry-button');
+    const checkoutButton = document.getElementById('checkout-button'); // Asegúrate de que este ID exista en tu formulario
 
-    try {
-        const response = await fetch('/create-checkout-session', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-               gender: document.getElementById("gender").value,
-               weight: document.getElementById("weight").value,
-               height: document.getElementById("height").value,
-               age: document.getElementById("age").value,
-               intensity: document.getElementById("intensity").value,
-               goal: document.getElementById("goal").value,
-               condition: document.getElementById("condition").value,
-               equip: document.getElementById("equip").value,
-               email: document.getElementById("email").value,
-            })
-        });
+    if (checkoutButton) {
+        checkoutButton.addEventListener('click', validateForm);
+    }
 
-        if (response.ok) {
-            const session = await response.json();
-
-            // Redirige al usuario a Stripe Checkout
-            const result = await stripe.redirectToCheckout({
-                sessionId: session.id
-            });
-
-            if (result.error) {
-                // Informa al usuario si hay un error
-                alert(result.error.message);
-                console.error(result.error.message);
+    if (retryButton) {
+        retryButton.addEventListener('click', () => {
+            // Recupera el ID de la sesión de la almacenamiento local
+            const sessionId = localStorage.getItem('stripeSessionId');
+            if (sessionId) {
+                stripe.redirectToCheckout({ sessionId: sessionId })
+                .then(result => {
+                    if (result.error) {
+                        alert(result.error.message);
+                    }
+                });
+            } else {
+                // Manejar el caso en que no hay una sesión guardada
+                console.log("No hay sesión guardada.");
             }
-        } else {
-            // Manejo de errores si la respuesta no es ok
-            throw new Error('Network response was not ok.');
-        }
-    } catch (error) {
-        // Manejo de errores en la solicitud fetch
-        alert('Could not initiate Stripe Checkout. Please try again.');
-        console.error('Error:', error);
-    } finally {
-        // Reactivar el botón de envío
-        document.getElementById('order-submit-btn').disabled = false;
+        });
     }
 });
+
 
